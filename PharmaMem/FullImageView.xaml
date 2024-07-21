@@ -1,0 +1,8 @@
+﻿<Window x:Class="PharmaMem.FullImageView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Full Image View" Height="600" Width="800">
+    <Grid>
+        <Image Name="FullImage" Stretch="Uniform"/>
+    </Grid>
+</Window>

@@ -1,0 +1,8 @@
+﻿<Window x:Class="PharmaMem.FullScreenImageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FullScreenImageWindow" WindowState="Maximized" WindowStyle="None" Background="Black">
+    <Grid>
+        <Image Name="FullScreenImage" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</Window>

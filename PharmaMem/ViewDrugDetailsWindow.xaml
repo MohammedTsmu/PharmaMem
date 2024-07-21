@@ -8,6 +8,14 @@
                              Storyboard.TargetProperty="Opacity"
                              From="0" To="1" Duration="0:0:0.5"/>
         </Storyboard>
+        <Storyboard x:Key="SlideOutAnimation">
+            <DoubleAnimation Storyboard.TargetName="CurrentImage"
+                             Storyboard.TargetProperty="Opacity"
+                             From="1" To="0" Duration="0:0:0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FadeTransition">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+        </Storyboard>
     </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10">
@@ -41,46 +49,18 @@
                 <Grid>
                     <Image Name="CurrentImage" Height="200" Width="200" Margin="10"
                            MouseEnter="CurrentImage_MouseEnter" MouseLeave="CurrentImage_MouseLeave"
-                           MouseMove="CurrentImage_MouseMove"/>
+                           MouseMove="CurrentImage_MouseMove" MouseDown="CurrentImage_MouseDown"/>
                     <Popup Name="ImagePopup" Placement="Mouse" AllowsTransparency="True" PopupAnimation="Fade">
                         <Border BorderBrush="Black" BorderThickness="1">
                             <Grid Width="400" Height="400">
-                                <Image Name="PopupImage" Stretch="UniformToFill"/>
-                                <Viewport3D>
-                                    <Viewport3D.Camera>
-                                        <PerspectiveCamera Position="0,0,2" LookDirection="0,0,-1" UpDirection="0,1,0"/>
-                                    </Viewport3D.Camera>
-                                    <ModelVisual3D>
-                                        <ModelVisual3D.Content>
-                                            <DirectionalLight Color="White" Direction="0,0,-1"/>
-                                        </ModelVisual3D.Content>
-                                    </ModelVisual3D>
-                                    <ModelVisual3D>
-                                        <ModelVisual3D.Content>
-                                            <GeometryModel3D>
-                                                <GeometryModel3D.Geometry>
-                                                    <MeshGeometry3D Positions="-1,-1,0 1,-1,0 1,1,0 -1,1,0"
-                                                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                                                    TriangleIndices="0,1,2 0,2,3"/>
-                                                </GeometryModel3D.Geometry>
-                                                <GeometryModel3D.Material>
-                                                    <DiffuseMaterial>
-                                                        <DiffuseMaterial.Brush>
-                                                            <VisualBrush Visual="{Binding ElementName=PopupImage}">
-                                                                <VisualBrush.RelativeTransform>
-                                                                    <TransformGroup>
-                                                                        <ScaleTransform ScaleX="2" ScaleY="2"/>
-                                                                        <TranslateTransform x:Name="ImageTranslateTransform"/>
-                                                                    </TransformGroup>
-                                                                </VisualBrush.RelativeTransform>
-                                                            </VisualBrush>
-                                                        </DiffuseMaterial.Brush>
-                                                    </DiffuseMaterial>
-                                                </GeometryModel3D.Material>
-                                            </GeometryModel3D>
-                                        </ModelVisual3D.Content>
-                                    </ModelVisual3D>
-                                </Viewport3D>
+                                <Image Name="PopupImage" Stretch="UniformToFill" MouseWheel="PopupImage_MouseWheel">
+                                    <Image.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="PopupImageScaleTransform"/>
+                                            <TranslateTransform x:Name="PopupImageTranslateTransform"/>
+                                        </TransformGroup>
+                                    </Image.RenderTransform>
+                                </Image>
                             </Grid>
                         </Border>
                     </Popup>
@@ -88,7 +68,9 @@
                 <Button Content="Next" Click="NextImage_Click" Width="75" Margin="10"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
-                <Button Content="Edit" Width="100" Click="EditDrug_Click"/>
+                <Button Content="Start Slideshow" Width="100" Click="StartSlideShow_Click"/>
+                <Button Content="Stop Slideshow" Width="100" Margin="10,0,0,0" Click="StopSlideShow_Click"/>
+                <Button Content="Edit" Width="100" Margin="10,0,0,0" Click="EditDrug_Click"/>
                 <Button Content="Delete" Width="100" Margin="10,0,0,0" Click="DeleteDrug_Click"/>
             </StackPanel>
         </StackPanel>

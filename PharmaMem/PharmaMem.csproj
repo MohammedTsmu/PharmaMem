@@ -77,6 +77,9 @@
     <Compile Include="EditDrugWindow.xaml.cs">
       <DependentUpon>EditDrugWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FullImageView.xaml.cs">
+      <DependentUpon>FullImageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewDrugDetailsWindow.xaml.cs">
       <DependentUpon>ViewDrugDetailsWindow.xaml</DependentUpon>
     </Compile>
@@ -89,6 +92,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EditDrugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FullImageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

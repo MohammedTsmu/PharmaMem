@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace PharmaMem
 {
@@ -15,6 +16,8 @@ namespace PharmaMem
         private Database db;
         private List<BitmapImage> images;
         private int currentImageIndex;
+        private DispatcherTimer slideShowTimer;
+        private double currentZoom = 1;
 
         public ViewDrugDetailsWindow(int id)
         {
@@ -22,6 +25,7 @@ namespace PharmaMem
             drugId = id;
             db = new Database();
             LoadDrugDetails();
+            SetupSlideShow();
         }
 
         private void LoadDrugDetails()
@@ -72,14 +76,37 @@ namespace PharmaMem
             }
         }
 
+        private void SetupSlideShow()
+        {
+            slideShowTimer = new DispatcherTimer();
+            slideShowTimer.Interval = TimeSpan.FromSeconds(5);
+            slideShowTimer.Tick += (s, e) => NextImage_Click(null, null);
+        }
+
+        private void StartSlideShow_Click(object sender, RoutedEventArgs e)
+        {
+            slideShowTimer.Start();
+        }
+
+        private void StopSlideShow_Click(object sender, RoutedEventArgs e)
+        {
+            slideShowTimer.Stop();
+        }
+
         private void PreviousImage_Click(object sender, RoutedEventArgs e)
         {
             if (images.Count > 0)
             {
-                currentImageIndex = (currentImageIndex - 1 + images.Count) % images.Count;
-                AnimateImageTransition();
-                CurrentImage.Source = images[currentImageIndex];
-                PopupImage.Source = images[currentImageIndex];
+                Storyboard slideOutStoryboard = (Storyboard)FindResource("SlideOutAnimation");
+                slideOutStoryboard.Completed += (s, ev) =>
+                {
+                    currentImageIndex = (currentImageIndex - 1 + images.Count) % images.Count;
+                    CurrentImage.Source = images[currentImageIndex];
+                    PopupImage.Source = images[currentImageIndex];
+                    Storyboard slideInStoryboard = (Storyboard)FindResource("SlideInAnimation");
+                    slideInStoryboard.Begin();
+                };
+                slideOutStoryboard.Begin();
             }
         }
 
@@ -87,18 +114,20 @@ namespace PharmaMem
         {
             if (images.Count > 0)
             {
-                currentImageIndex = (currentImageIndex + 1) % images.Count;
-                AnimateImageTransition();
-                CurrentImage.Source = images[currentImageIndex];
-                PopupImage.Source = images[currentImageIndex];
+                Storyboard slideOutStoryboard = (Storyboard)FindResource("SlideOutAnimation");
+                slideOutStoryboard.Completed += (s, ev) =>
+                {
+                    currentImageIndex = (currentImageIndex + 1) % images.Count;
+                    CurrentImage.Source = images[currentImageIndex];
+                    PopupImage.Source = images[currentImageIndex];
+                    Storyboard slideInStoryboard = (Storyboard)FindResource("SlideInAnimation");
+                    slideInStoryboard.Begin();
+                };
+                slideOutStoryboard.Begin();
             }
         }
 
-        private void AnimateImageTransition()
-        {
-            Storyboard storyboard = (Storyboard)FindResource("SlideInAnimation");
-            storyboard.Begin();
-        }
+
 
         private void CurrentImage_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -115,11 +144,35 @@ namespace PharmaMem
             if (ImagePopup.IsOpen)
             {
                 var position = e.GetPosition(CurrentImage);
-                double translateX = -(position.X / CurrentImage.ActualWidth) * (PopupImage.ActualWidth / 2);
-                double translateY = -(position.Y / CurrentImage.ActualHeight) * (PopupImage.ActualHeight / 2);
+                double translateX = -(position.X / CurrentImage.ActualWidth) * PopupImage.ActualWidth;
+                double translateY = -(position.Y / CurrentImage.ActualHeight) * PopupImage.ActualHeight;
 
-                ImageTranslateTransform.X = translateX;
-                ImageTranslateTransform.Y = translateY;
+                PopupImageTranslateTransform.X = translateX;
+                PopupImageTranslateTransform.Y = translateY;
+            }
+        }
+
+        private void PopupImage_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                currentZoom += 0.1;
+            }
+            else
+            {
+                currentZoom -= 0.1;
+            }
+            currentZoom = Math.Max(0.5, Math.Min(2.0, currentZoom));
+            PopupImageScaleTransform.ScaleX = currentZoom;
+            PopupImageScaleTransform.ScaleY = currentZoom;
+        }
+
+        private void CurrentImage_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                FullImageView fullImageView = new FullImageView(images[currentImageIndex]);
+                fullImageView.Show();
             }
         }
 
