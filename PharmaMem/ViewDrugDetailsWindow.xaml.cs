@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace PharmaMem
 {
@@ -66,6 +68,7 @@ namespace PharmaMem
             {
                 currentImageIndex = 0;
                 CurrentImage.Source = images[currentImageIndex];
+                PopupImage.Source = images[currentImageIndex];
             }
         }
 
@@ -76,6 +79,7 @@ namespace PharmaMem
                 currentImageIndex = (currentImageIndex - 1 + images.Count) % images.Count;
                 AnimateImageTransition();
                 CurrentImage.Source = images[currentImageIndex];
+                PopupImage.Source = images[currentImageIndex];
             }
         }
 
@@ -86,6 +90,7 @@ namespace PharmaMem
                 currentImageIndex = (currentImageIndex + 1) % images.Count;
                 AnimateImageTransition();
                 CurrentImage.Source = images[currentImageIndex];
+                PopupImage.Source = images[currentImageIndex];
             }
         }
 
@@ -93,6 +98,29 @@ namespace PharmaMem
         {
             Storyboard storyboard = (Storyboard)FindResource("SlideInAnimation");
             storyboard.Begin();
+        }
+
+        private void CurrentImage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ImagePopup.IsOpen = true;
+        }
+
+        private void CurrentImage_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ImagePopup.IsOpen = false;
+        }
+
+        private void CurrentImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ImagePopup.IsOpen)
+            {
+                var position = e.GetPosition(CurrentImage);
+                double translateX = -(position.X / CurrentImage.ActualWidth) * (PopupImage.ActualWidth / 2);
+                double translateY = -(position.Y / CurrentImage.ActualHeight) * (PopupImage.ActualHeight / 2);
+
+                ImageTranslateTransform.X = translateX;
+                ImageTranslateTransform.Y = translateY;
+            }
         }
 
         private void EditDrug_Click(object sender, RoutedEventArgs e)
