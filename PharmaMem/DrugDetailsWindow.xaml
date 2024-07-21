@@ -1,0 +1,24 @@
+﻿<Window x:Class="PharmaMem.DrugDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Drug Details" Height="450" Width="400">
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBox Name="GenericName" ToolTip="Generic Name"/>
+            <TextBox Name="BrandName" ToolTip="Brand Name"/>
+            <TextBox Name="Type" ToolTip="Type"/>
+            <TextBox Name="Dosage" ToolTip="Dosage"/>
+            <TextBox Name="Uses" ToolTip="Uses"/>
+            <TextBox Name="SideEffects" ToolTip="Side Effects"/>
+            <TextBox Name="Group" ToolTip="Group"/>
+            <TextBox Name="Category" ToolTip="Category"/>
+            <TextBox Name="Form" ToolTip="Form"/>
+            <TextBox Name="Family" ToolTip="Family"/>
+            <TextBox Name="Mechanism" ToolTip="Mechanism"/>
+            <TextBox Name="MainJob" ToolTip="Main Job"/>
+            <Button Content="Save" Click="SaveDrug_Click"/>
+            <Button Content="Delete" Click="DeleteDrug_Click"/>
+            <Button Content="Manage Images" Click="ManageImages_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

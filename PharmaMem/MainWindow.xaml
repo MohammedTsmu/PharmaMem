@@ -1,0 +1,34 @@
+﻿<Window x:Class="PharmaMem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PharmaMem" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <TextBox Name="SearchTextBox" Width="200" Margin="0,0,10,0"/>
+            <Button Content="Search" Click="Search_Click"/>
+            <ComboBox Name="FilterComboBox" Width="200" Margin="10,0,0,0">
+                <ComboBoxItem Content="All"/>
+                <ComboBoxItem Content="Generic Name"/>
+                <ComboBoxItem Content="Brand Name"/>
+                <ComboBoxItem Content="Type"/>
+                <ComboBoxItem Content="Category"/>
+            </ComboBox>
+            <Button Content="Filter" Click="Filter_Click"/>
+            <Button Content="Add Drug" Click="AddDrug_Click" Margin="10,0,0,0"/>
+            <Button Content="Import CSV" Click="ImportFromCSV_Click" Margin="10,0,0,0"/>
+            <Button Content="Backup DB" Click="BackupDatabase_Click" Margin="10,0,0,0"/>
+            <Button Content="Restore DB" Click="RestoreDatabase_Click" Margin="10,0,0,0"/>
+        </StackPanel>
+        <ListBox Name="DrugsList" Grid.Row="1" MouseDoubleClick="DrugsList_MouseDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding GenericName}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
