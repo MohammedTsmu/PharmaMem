@@ -127,8 +127,6 @@ namespace PharmaMem
             }
         }
 
-
-
         private void CurrentImage_MouseEnter(object sender, MouseEventArgs e)
         {
             ImagePopup.IsOpen = true;
@@ -144,11 +142,11 @@ namespace PharmaMem
             if (ImagePopup.IsOpen)
             {
                 var position = e.GetPosition(CurrentImage);
-                double translateX = -(position.X / CurrentImage.ActualWidth) * PopupImage.ActualWidth;
-                double translateY = -(position.Y / CurrentImage.ActualHeight) * PopupImage.ActualHeight;
+                double translateX = (position.X / CurrentImage.ActualWidth) * (PopupImage.ActualWidth - CurrentImage.ActualWidth);
+                double translateY = (position.Y / CurrentImage.ActualHeight) * (PopupImage.ActualHeight - CurrentImage.ActualHeight);
 
-                PopupImageTranslateTransform.X = translateX;
-                PopupImageTranslateTransform.Y = translateY;
+                PopupImageTranslateTransform.X = -translateX;
+                PopupImageTranslateTransform.Y = -translateY;
             }
         }
 
