@@ -157,8 +157,8 @@ namespace PharmaMem
                         string[] fields = line.Split(',');
 
                         SQLiteCommand command = new SQLiteCommand(@"
-                            INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, ActiveIngredient, Formulation, AdministrationRoute, PrescriptionRequired, DosageForm) 
-                            VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob, @ActiveIngredient, @Formulation, @AdministrationRoute, @PrescriptionRequired, @DosageForm)", db.Connection);
+                    INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, MaxDose, DrugInteractions, SpecialInstructions, StorageConditions, ShelfLife, Precautions, Contraindications, Manufacturer, Price, ProductCode, ActiveIngredient, Formulation, AdministrationRoute, PrescriptionRequired, DosageForm, ATCCode, NDCCode) 
+                    VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob, @MaxDose, @DrugInteractions, @SpecialInstructions, @StorageConditions, @ShelfLife, @Precautions, @Contraindications, @Manufacturer, @Price, @ProductCode, @ActiveIngredient, @Formulation, @AdministrationRoute, @PrescriptionRequired, @DosageForm, @ATCCode, @NDCCode)", db.Connection);
 
                         command.Parameters.AddWithValue("@GenericName", fields[1]);
                         command.Parameters.AddWithValue("@BrandName", fields[2]);
@@ -172,11 +172,23 @@ namespace PharmaMem
                         command.Parameters.AddWithValue("@Family", fields[10]);
                         command.Parameters.AddWithValue("@Mechanism", fields[11]);
                         command.Parameters.AddWithValue("@MainJob", fields[12]);
-                        command.Parameters.AddWithValue("@ActiveIngredient", fields[13]);
-                        command.Parameters.AddWithValue("@Formulation", fields[14]);
-                        command.Parameters.AddWithValue("@AdministrationRoute", fields[15]);
-                        command.Parameters.AddWithValue("@PrescriptionRequired", bool.Parse(fields[16]));
-                        command.Parameters.AddWithValue("@DosageForm", fields[17]);
+                        command.Parameters.AddWithValue("@MaxDose", fields[13]);
+                        command.Parameters.AddWithValue("@DrugInteractions", fields[14]);
+                        command.Parameters.AddWithValue("@SpecialInstructions", fields[15]);
+                        command.Parameters.AddWithValue("@StorageConditions", fields[16]);
+                        command.Parameters.AddWithValue("@ShelfLife", fields[17]);
+                        command.Parameters.AddWithValue("@Precautions", fields[18]);
+                        command.Parameters.AddWithValue("@Contraindications", fields[19]);
+                        command.Parameters.AddWithValue("@Manufacturer", fields[20]);
+                        command.Parameters.AddWithValue("@Price", fields[21]);
+                        command.Parameters.AddWithValue("@ProductCode", fields[22]);
+                        command.Parameters.AddWithValue("@ActiveIngredient", fields[23]);
+                        command.Parameters.AddWithValue("@Formulation", fields[24]);
+                        command.Parameters.AddWithValue("@AdministrationRoute", fields[25]);
+                        command.Parameters.AddWithValue("@PrescriptionRequired", bool.Parse(fields[26]));
+                        command.Parameters.AddWithValue("@DosageForm", fields[27]);
+                        command.Parameters.AddWithValue("@ATCCode", fields[28]);
+                        command.Parameters.AddWithValue("@NDCCode", fields[29]);
 
                         command.ExecuteNonQuery();
                     }
@@ -185,6 +197,7 @@ namespace PharmaMem
                 LoadDrugs(); // Refresh the list after importing
             }
         }
+
 
         private void BackupDatabase_Click(object sender, RoutedEventArgs e)
         {
