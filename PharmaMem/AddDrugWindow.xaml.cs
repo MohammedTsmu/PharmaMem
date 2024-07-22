@@ -11,13 +11,14 @@ namespace PharmaMem
 {
     public partial class AddDrugWindow : Window
     {
-        private List<byte[]> imageBlobs = new List<byte[]>(); // تعديل لحفظ الصور كبيانات ثنائية
+        private List<byte[]> imageBytesList = new List<byte[]>();
         private Database db;
 
         public AddDrugWindow()
         {
             InitializeComponent();
-            db = new Database(); // تهيئة الكائن db
+            db = new Database();
+
             ShowPlaceholder(GenericNameTextBox, "Generic Name");
             ShowPlaceholder(BrandNameTextBox, "Brand Name");
             ShowPlaceholder(TypeTextBox, "Type");
@@ -30,7 +31,6 @@ namespace PharmaMem
             ShowPlaceholder(FamilyTextBox, "Family");
             ShowPlaceholder(MechanismTextBox, "Mechanism");
             ShowPlaceholder(MainJobTextBox, "Main Job");
-
             ShowPlaceholder(MaxDoseTextBox, "Max Dose");
             ShowPlaceholder(DrugInteractionsTextBox, "Drug Interactions");
             ShowPlaceholder(SpecialInstructionsTextBox, "Special Instructions");
@@ -40,7 +40,6 @@ namespace PharmaMem
             ShowPlaceholder(ContraindicationsTextBox, "Contraindications");
             ShowPlaceholder(ManufacturerTextBox, "Manufacturer");
             ShowPlaceholder(PriceTextBox, "Price");
-            ShowPlaceholder(ProductCodeTextBox, "Product Code");
         }
 
         private void ShowPlaceholder(TextBox textBox, string placeholder)
@@ -78,11 +77,12 @@ namespace PharmaMem
 
             if (openFileDialog.ShowDialog() == true)
             {
-                foreach (string fileName in openFileDialog.FileNames)
+                foreach (string filePath in openFileDialog.FileNames)
                 {
-                    byte[] imageBytes = File.ReadAllBytes(fileName); // التأكد من إضافة using System.IO;
-                    imageBlobs.Add(imageBytes);
+                    byte[] imageBytes = File.ReadAllBytes(filePath);
+                    imageBytesList.Add(imageBytes);
                 }
+
                 MessageBox.Show($"{openFileDialog.FileNames.Length} images added.", "Images Added", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
@@ -101,7 +101,6 @@ namespace PharmaMem
             string family = FamilyTextBox.Text;
             string mechanism = MechanismTextBox.Text;
             string mainJob = MainJobTextBox.Text;
-
             string maxDose = MaxDoseTextBox.Text;
             string drugInteractions = DrugInteractionsTextBox.Text;
             string specialInstructions = SpecialInstructionsTextBox.Text;
@@ -111,7 +110,7 @@ namespace PharmaMem
             string contraindications = ContraindicationsTextBox.Text;
             string manufacturer = ManufacturerTextBox.Text;
             string price = PriceTextBox.Text;
-            string productCode = ProductCodeTextBox.Text;
+            string productCode = GenerateUniqueProductCode();  // توليد كود فريد
 
             SQLiteCommand command = new SQLiteCommand(@"
                 INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, MaxDose, DrugInteractions, SpecialInstructions, StorageConditions, ShelfLife, Precautions, Contraindications, Manufacturer, Price, ProductCode) 
@@ -129,7 +128,6 @@ namespace PharmaMem
             command.Parameters.AddWithValue("@Family", family);
             command.Parameters.AddWithValue("@Mechanism", mechanism);
             command.Parameters.AddWithValue("@MainJob", mainJob);
-
             command.Parameters.AddWithValue("@MaxDose", maxDose);
             command.Parameters.AddWithValue("@DrugInteractions", drugInteractions);
             command.Parameters.AddWithValue("@SpecialInstructions", specialInstructions);
@@ -145,20 +143,25 @@ namespace PharmaMem
 
             long drugId = db.Connection.LastInsertRowId;
 
-            foreach (byte[] imageBlob in imageBlobs)
+            foreach (byte[] imageBytes in imageBytesList)
             {
                 SQLiteCommand imageCommand = new SQLiteCommand(@"
-                    INSERT INTO DrugImages (DrugId, ImageBlob) 
-                    VALUES (@DrugId, @ImageBlob)", db.Connection);
+                    INSERT INTO DrugImages (DrugId, ImageData) 
+                    VALUES (@DrugId, @ImageData)", db.Connection);
 
                 imageCommand.Parameters.AddWithValue("@DrugId", drugId);
-                imageCommand.Parameters.AddWithValue("@ImageBlob", imageBlob);
+                imageCommand.Parameters.AddWithValue("@ImageData", imageBytes);
 
                 imageCommand.ExecuteNonQuery();
             }
 
             MessageBox.Show("Drug saved successfully.", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
             Close();
+        }
+
+        private string GenerateUniqueProductCode()
+        {
+            return Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
         }
     }
 }

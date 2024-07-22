@@ -54,7 +54,7 @@ namespace PharmaMem
                 CREATE TABLE IF NOT EXISTS DrugImages (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     DrugId INTEGER,
-                    ImageBlob BLOB,
+                    ImageData BLOB,
                     FOREIGN KEY (DrugId) REFERENCES Drugs(Id) ON DELETE CASCADE
                 )";
 
