@@ -31,6 +31,10 @@
                         <TextBlock Text="{Binding BrandName}" FontSize="12" Foreground="Gray"/>
                         <TextBlock Text="{Binding Type}" FontSize="12"/>
                         <TextBlock Text="{Binding Dosage}" FontSize="12"/>
+                        <TextBlock Text="{Binding AdministrationRoute}" FontSize="12"/>
+                        <TextBlock Text="{Binding PrescriptionRequired}" FontSize="12"/>
+                        <TextBlock Text="{Binding DosageForm}" FontSize="12"/>
+                        <TextBlock Text="{Binding Category}" FontSize="12"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
