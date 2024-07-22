@@ -24,39 +24,45 @@ namespace PharmaMem
         public void CreateTables()
         {
             string createDrugsTable = @"
-                CREATE TABLE IF NOT EXISTS Drugs (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    GenericName TEXT NOT NULL,
-                    BrandName TEXT,
-                    Type TEXT,
-                    Dosage TEXT,
-                    Uses TEXT,
-                    SideEffects TEXT,
-                    `Group` TEXT,
-                    Category TEXT,
-                    Form TEXT,
-                    Family TEXT,
-                    Mechanism TEXT,
-                    MainJob TEXT,
-                    MaxDose TEXT,
-                    DrugInteractions TEXT,
-                    SpecialInstructions TEXT,
-                    StorageConditions TEXT,
-                    ShelfLife TEXT,
-                    Precautions TEXT,
-                    Contraindications TEXT,
-                    Manufacturer TEXT,
-                    Price TEXT,
-                    ProductCode TEXT
-                )";
+        CREATE TABLE IF NOT EXISTS Drugs (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            GenericName TEXT NOT NULL,
+            BrandName TEXT,
+            Type TEXT,
+            Dosage TEXT,
+            Uses TEXT,
+            SideEffects TEXT,
+            `Group` TEXT,
+            Category TEXT,
+            Form TEXT,
+            Family TEXT,
+            Mechanism TEXT,
+            MainJob TEXT,
+            MaxDose TEXT,
+            DrugInteractions TEXT,
+            SpecialInstructions TEXT,
+            StorageConditions TEXT,
+            ShelfLife TEXT,
+            Precautions TEXT,
+            Contraindications TEXT,
+            Manufacturer TEXT,
+            Price TEXT,
+            ProductCode TEXT,
+            ActiveIngredient TEXT,
+            Formulation TEXT,
+            AdministrationRoute TEXT,
+            PrescriptionRequired BOOLEAN,
+            DosageForm TEXT
+        )";
 
             string createDrugImagesTable = @"
-                CREATE TABLE IF NOT EXISTS DrugImages (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    DrugId INTEGER,
-                    ImageData BLOB,
-                    FOREIGN KEY (DrugId) REFERENCES Drugs(Id) ON DELETE CASCADE
-                )";
+        CREATE TABLE IF NOT EXISTS DrugImages (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            DrugId INTEGER,
+            ImageData BLOB,
+            ImageBlob BLOB,
+            FOREIGN KEY (DrugId) REFERENCES Drugs(Id) ON DELETE CASCADE
+        )";
 
             SQLiteCommand command = new SQLiteCommand(createDrugsTable, Connection);
             command.ExecuteNonQuery();
@@ -64,5 +70,7 @@ namespace PharmaMem
             command = new SQLiteCommand(createDrugImagesTable, Connection);
             command.ExecuteNonQuery();
         }
+
+
     }
 }

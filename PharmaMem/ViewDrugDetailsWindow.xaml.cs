@@ -18,7 +18,7 @@ namespace PharmaMem
         private List<BitmapImage> images;
         private int currentImageIndex;
         private DispatcherTimer slideShowTimer;
-        private double currentZoom = 2;
+        private double currentZoom = 10;
 
         public ViewDrugDetailsWindow(int id)
         {

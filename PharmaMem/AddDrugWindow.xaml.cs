@@ -40,6 +40,12 @@ namespace PharmaMem
             ShowPlaceholder(ContraindicationsTextBox, "Contraindications");
             ShowPlaceholder(ManufacturerTextBox, "Manufacturer");
             ShowPlaceholder(PriceTextBox, "Price");
+            ShowPlaceholder(ActiveIngredientTextBox, "Active Ingredient");
+            ShowPlaceholder(FormulationTextBox, "Formulation");
+            ShowPlaceholder(AdministrationRouteTextBox, "Administration Route");
+            ShowPlaceholder(DosageFormTextBox, "Dosage Form");
+            ProductCodeTextBox.Text = GenerateUniqueProductCode();
+            ProductCodeTextBox.IsReadOnly = true;
         }
 
         private void ShowPlaceholder(TextBox textBox, string placeholder)
@@ -64,6 +70,11 @@ namespace PharmaMem
                     textBox.Foreground = Brushes.Gray;
                 }
             };
+        }
+
+        private string GenerateUniqueProductCode()
+        {
+            return Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
         }
 
         private void AddImages_Click(object sender, RoutedEventArgs e)
@@ -110,11 +121,16 @@ namespace PharmaMem
             string contraindications = ContraindicationsTextBox.Text;
             string manufacturer = ManufacturerTextBox.Text;
             string price = PriceTextBox.Text;
-            string productCode = GenerateUniqueProductCode();  // توليد كود فريد
+            string productCode = ProductCodeTextBox.Text;
+            string activeIngredient = ActiveIngredientTextBox.Text;
+            string formulation = FormulationTextBox.Text;
+            string administrationRoute = AdministrationRouteTextBox.Text;
+            bool prescriptionRequired = PrescriptionRequiredCheckBox.IsChecked == true;
+            string dosageForm = DosageFormTextBox.Text;
 
             SQLiteCommand command = new SQLiteCommand(@"
-                INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, MaxDose, DrugInteractions, SpecialInstructions, StorageConditions, ShelfLife, Precautions, Contraindications, Manufacturer, Price, ProductCode) 
-                VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob,  @MaxDose, @DrugInteractions, @SpecialInstructions, @StorageConditions, @ShelfLife, @Precautions, @Contraindications, @Manufacturer, @Price, @ProductCode)", db.Connection);
+                INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, MaxDose, DrugInteractions, SpecialInstructions, StorageConditions, ShelfLife, Precautions, Contraindications, Manufacturer, Price, ProductCode, ActiveIngredient, Formulation, AdministrationRoute, PrescriptionRequired, DosageForm) 
+                VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob, @MaxDose, @DrugInteractions, @SpecialInstructions, @StorageConditions, @ShelfLife, @Precautions, @Contraindications, @Manufacturer, @Price, @ProductCode, @ActiveIngredient, @Formulation, @AdministrationRoute, @PrescriptionRequired, @DosageForm)", db.Connection);
 
             command.Parameters.AddWithValue("@GenericName", genericName);
             command.Parameters.AddWithValue("@BrandName", brandName);
@@ -138,6 +154,11 @@ namespace PharmaMem
             command.Parameters.AddWithValue("@Manufacturer", manufacturer);
             command.Parameters.AddWithValue("@Price", price);
             command.Parameters.AddWithValue("@ProductCode", productCode);
+            command.Parameters.AddWithValue("@ActiveIngredient", activeIngredient);
+            command.Parameters.AddWithValue("@Formulation", formulation);
+            command.Parameters.AddWithValue("@AdministrationRoute", administrationRoute);
+            command.Parameters.AddWithValue("@PrescriptionRequired", prescriptionRequired);
+            command.Parameters.AddWithValue("@DosageForm", dosageForm);
 
             command.ExecuteNonQuery();
 
@@ -157,11 +178,6 @@ namespace PharmaMem
 
             MessageBox.Show("Drug saved successfully.", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
             Close();
-        }
-
-        private string GenerateUniqueProductCode()
-        {
-            return Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
         }
     }
 }
