@@ -19,12 +19,14 @@ namespace PharmaMem
         private int currentImageIndex;
         private DispatcherTimer slideShowTimer;
         private double currentZoom = 10;
+        private MainWindow mainWindow;
 
-        public ViewDrugDetailsWindow(int id)
+        public ViewDrugDetailsWindow(int id, MainWindow mainWindow)
         {
             InitializeComponent();
             drugId = id;
             db = new Database();
+            this.mainWindow = mainWindow;
             LoadDrugDetails();
             SetupSlideShow();
         }
@@ -210,6 +212,7 @@ namespace PharmaMem
                 command.Parameters.AddWithValue("@Id", drugId);
                 command.ExecuteNonQuery();
                 MessageBox.Show("Drug deleted successfully.", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+                mainWindow.LoadDrugs(); // Refresh the drug list in the main window
                 Close();
             }
         }

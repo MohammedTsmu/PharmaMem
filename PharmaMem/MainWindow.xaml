@@ -8,16 +8,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <TextBox Name="SearchTextBox" Width="200" Margin="0,0,10,0"/>
-            <Button Content="Search" Click="Search_Click"/>
+            <TextBox Name="SearchTextBox" Width="200" Margin="0,0,10,0" TextChanged="SearchTextBox_TextChanged" GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
             <ComboBox Name="FilterComboBox" Width="200" Margin="10,0,0,0">
                 <ComboBoxItem Content="All"/>
                 <ComboBoxItem Content="Generic Name"/>
                 <ComboBoxItem Content="Brand Name"/>
                 <ComboBoxItem Content="Type"/>
                 <ComboBoxItem Content="Category"/>
+                <ComboBoxItem Content="Administration Route"/>
+                <ComboBoxItem Content="Dosage Form"/>
             </ComboBox>
-            <Button Content="Filter" Click="Filter_Click"/>
             <Button Content="Add Drug" Click="AddDrug_Click" Margin="10,0,0,0"/>
             <Button Content="Import CSV" Click="ImportFromCSV_Click" Margin="10,0,0,0"/>
             <Button Content="Backup DB" Click="BackupDatabase_Click" Margin="10,0,0,0"/>
@@ -26,7 +26,12 @@
         <ListBox Name="DrugsList" Grid.Row="1" MouseDoubleClick="DrugsList_MouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding GenericName}"/>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="{Binding GenericName}" FontWeight="Bold" FontSize="14"/>
+                        <TextBlock Text="{Binding BrandName}" FontSize="12" Foreground="Gray"/>
+                        <TextBlock Text="{Binding Type}" FontSize="12"/>
+                        <TextBlock Text="{Binding Dosage}" FontSize="12"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

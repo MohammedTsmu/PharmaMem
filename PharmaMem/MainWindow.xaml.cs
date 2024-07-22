@@ -4,21 +4,75 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace PharmaMem
 {
     public partial class MainWindow : Window
     {
-        private Database db;
+        private readonly Database db;
+        private const string PlaceholderText = "Search...";
 
         public MainWindow()
         {
             InitializeComponent();
             db = new Database();
             LoadDrugs();
+            InitializeSearchBox();
         }
 
-        private void LoadDrugs()
+        private void InitializeSearchBox()
+        {
+            SearchTextBox.Text = PlaceholderText;
+            SearchTextBox.Foreground = Brushes.Gray;
+
+            SearchTextBox.GotFocus += RemovePlaceholderText;
+            SearchTextBox.LostFocus += AddPlaceholderText;
+            SearchTextBox.TextChanged += SearchTextBox_TextChanged;
+        }
+
+        private void RemovePlaceholderText(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox.Text == PlaceholderText)
+            {
+                textBox.Text = "";
+                textBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void AddPlaceholderText(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Text = PlaceholderText;
+                textBox.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = SearchTextBox.Text.ToLower();
+            if (searchText == PlaceholderText.ToLower())
+            {
+                LoadDrugs();
+                return;
+            }
+
+            List<Drug> filteredDrugs = ((List<Drug>)DrugsList.ItemsSource).Where(d =>
+                d.GenericName.ToLower().Contains(searchText) ||
+                d.BrandName.ToLower().Contains(searchText) ||
+                d.Type.ToLower().Contains(searchText) ||
+                d.Category.ToLower().Contains(searchText) ||
+                d.AdministrationRoute.ToLower().Contains(searchText) ||
+                d.DosageForm.ToLower().Contains(searchText)
+            ).ToList();
+
+            DrugsList.ItemsSource = filteredDrugs;
+        }
+
+        public void LoadDrugs()
         {
             SQLiteCommand command = new SQLiteCommand("SELECT * FROM Drugs", db.Connection);
             SQLiteDataReader reader = command.ExecuteReader();
@@ -40,64 +94,35 @@ namespace PharmaMem
                     Form = reader["Form"].ToString(),
                     Family = reader["Family"].ToString(),
                     Mechanism = reader["Mechanism"].ToString(),
-                    MainJob = reader["MainJob"].ToString()
+                    MainJob = reader["MainJob"].ToString(),
+                    ActiveIngredient = reader["ActiveIngredient"].ToString(),
+                    Formulation = reader["Formulation"].ToString(),
+                    AdministrationRoute = reader["AdministrationRoute"].ToString(),
+                    PrescriptionRequired = (bool)reader["PrescriptionRequired"],
+                    DosageForm = reader["DosageForm"].ToString()
                 });
             }
 
             DrugsList.ItemsSource = drugs;
         }
 
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            string searchText = SearchTextBox.Text.ToLower();
-            List<Drug> filteredDrugs = ((List<Drug>)DrugsList.ItemsSource).Where(d =>
-                d.GenericName.ToLower().Contains(searchText) ||
-                d.BrandName.ToLower().Contains(searchText) ||
-                d.Type.ToLower().Contains(searchText) ||
-                d.Category.ToLower().Contains(searchText)
-            ).ToList();
-
-            DrugsList.ItemsSource = filteredDrugs;
-        }
-
-        private void Filter_Click(object sender, RoutedEventArgs e)
-        {
-            string selectedFilter = (FilterComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-            if (string.IsNullOrEmpty(selectedFilter) || selectedFilter == "All")
-            {
-                LoadDrugs();
-                return;
-            }
-
-            string searchText = SearchTextBox.Text.ToLower();
-            List<Drug> filteredDrugs = ((List<Drug>)DrugsList.ItemsSource).Where(d =>
-            {
-                switch (selectedFilter)
-                {
-                    case "Generic Name":
-                        return d.GenericName.ToLower().Contains(searchText);
-                    case "Brand Name":
-                        return d.BrandName.ToLower().Contains(searchText);
-                    case "Type":
-                        return d.Type.ToLower().Contains(searchText);
-                    case "Category":
-                        return d.Category.ToLower().Contains(searchText);
-                    default:
-                        return false;
-                }
-            }).ToList();
-
-            DrugsList.ItemsSource = filteredDrugs;
-        }
-
-        private void DrugsList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        /*private void DrugsList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (DrugsList.SelectedItem is Drug selectedDrug)
             {
                 ViewDrugDetailsWindow detailsWindow = new ViewDrugDetailsWindow((int)selectedDrug.Id);
                 detailsWindow.ShowDialog();
             }
+        }*/
+        private void DrugsList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (DrugsList.SelectedItem is Drug selectedDrug)
+            {
+                ViewDrugDetailsWindow detailsWindow = new ViewDrugDetailsWindow((int)selectedDrug.Id, this);
+                detailsWindow.ShowDialog();
+            }
         }
+
 
         private void AddDrug_Click(object sender, RoutedEventArgs e)
         {
@@ -132,8 +157,8 @@ namespace PharmaMem
                         string[] fields = line.Split(',');
 
                         SQLiteCommand command = new SQLiteCommand(@"
-                            INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob) 
-                            VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob)", db.Connection);
+                            INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, ActiveIngredient, Formulation, AdministrationRoute, PrescriptionRequired, DosageForm) 
+                            VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob, @ActiveIngredient, @Formulation, @AdministrationRoute, @PrescriptionRequired, @DosageForm)", db.Connection);
 
                         command.Parameters.AddWithValue("@GenericName", fields[1]);
                         command.Parameters.AddWithValue("@BrandName", fields[2]);
@@ -147,6 +172,11 @@ namespace PharmaMem
                         command.Parameters.AddWithValue("@Family", fields[10]);
                         command.Parameters.AddWithValue("@Mechanism", fields[11]);
                         command.Parameters.AddWithValue("@MainJob", fields[12]);
+                        command.Parameters.AddWithValue("@ActiveIngredient", fields[13]);
+                        command.Parameters.AddWithValue("@Formulation", fields[14]);
+                        command.Parameters.AddWithValue("@AdministrationRoute", fields[15]);
+                        command.Parameters.AddWithValue("@PrescriptionRequired", bool.Parse(fields[16]));
+                        command.Parameters.AddWithValue("@DosageForm", fields[17]);
 
                         command.ExecuteNonQuery();
                     }
@@ -207,5 +237,10 @@ namespace PharmaMem
         public string Family { get; set; }
         public string Mechanism { get; set; }
         public string MainJob { get; set; }
+        public string ActiveIngredient { get; set; }
+        public string Formulation { get; set; }
+        public string AdministrationRoute { get; set; }
+        public bool PrescriptionRequired { get; set; }
+        public string DosageForm { get; set; }
     }
 }
