@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -9,11 +11,13 @@ namespace PharmaMem
 {
     public partial class AddDrugWindow : Window
     {
-        private List<string> imagePaths = new List<string>();
+        private List<byte[]> imageBlobs = new List<byte[]>(); // تعديل لحفظ الصور كبيانات ثنائية
+        private Database db;
 
         public AddDrugWindow()
         {
             InitializeComponent();
+            db = new Database(); // تهيئة الكائن db
             ShowPlaceholder(GenericNameTextBox, "Generic Name");
             ShowPlaceholder(BrandNameTextBox, "Brand Name");
             ShowPlaceholder(TypeTextBox, "Type");
@@ -74,7 +78,11 @@ namespace PharmaMem
 
             if (openFileDialog.ShowDialog() == true)
             {
-                imagePaths.AddRange(openFileDialog.FileNames);
+                foreach (string fileName in openFileDialog.FileNames)
+                {
+                    byte[] imageBytes = File.ReadAllBytes(fileName); // التأكد من إضافة using System.IO;
+                    imageBlobs.Add(imageBytes);
+                }
                 MessageBox.Show($"{openFileDialog.FileNames.Length} images added.", "Images Added", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
@@ -105,7 +113,6 @@ namespace PharmaMem
             string price = PriceTextBox.Text;
             string productCode = ProductCodeTextBox.Text;
 
-            Database db = new Database();
             SQLiteCommand command = new SQLiteCommand(@"
                 INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, MaxDose, DrugInteractions, SpecialInstructions, StorageConditions, ShelfLife, Precautions, Contraindications, Manufacturer, Price, ProductCode) 
                 VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob,  @MaxDose, @DrugInteractions, @SpecialInstructions, @StorageConditions, @ShelfLife, @Precautions, @Contraindications, @Manufacturer, @Price, @ProductCode)", db.Connection);
@@ -138,14 +145,14 @@ namespace PharmaMem
 
             long drugId = db.Connection.LastInsertRowId;
 
-            foreach (string imagePath in imagePaths)
+            foreach (byte[] imageBlob in imageBlobs)
             {
                 SQLiteCommand imageCommand = new SQLiteCommand(@"
-                    INSERT INTO DrugImages (DrugId, ImagePath) 
-                    VALUES (@DrugId, @ImagePath)", db.Connection);
+                    INSERT INTO DrugImages (DrugId, ImageBlob) 
+                    VALUES (@DrugId, @ImageBlob)", db.Connection);
 
                 imageCommand.Parameters.AddWithValue("@DrugId", drugId);
-                imageCommand.Parameters.AddWithValue("@ImagePath", imagePath);
+                imageCommand.Parameters.AddWithValue("@ImageBlob", imageBlob);
 
                 imageCommand.ExecuteNonQuery();
             }

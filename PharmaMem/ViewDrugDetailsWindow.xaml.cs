@@ -7,6 +7,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.IO;
 
 namespace PharmaMem
 {
@@ -65,19 +66,23 @@ namespace PharmaMem
 
         private void LoadDrugImages()
         {
-            SQLiteCommand command = new SQLiteCommand("SELECT ImagePath FROM DrugImages WHERE DrugId = @DrugId", db.Connection);
+            SQLiteCommand command = new SQLiteCommand("SELECT ImageBlob FROM DrugImages WHERE DrugId = @DrugId", db.Connection);
             command.Parameters.AddWithValue("@DrugId", drugId);
             SQLiteDataReader reader = command.ExecuteReader();
             images = new List<BitmapImage>();
 
             while (reader.Read())
             {
-                string imagePath = reader["ImagePath"].ToString();
-                if (System.IO.File.Exists(imagePath))
+                byte[] imageBytes = (byte[])reader["ImageBlob"];
+                BitmapImage image = new BitmapImage();
+                using (MemoryStream ms = new MemoryStream(imageBytes))
                 {
-                    BitmapImage image = new BitmapImage(new Uri(imagePath));
-                    images.Add(image);
+                    image.BeginInit();
+                    image.StreamSource = ms;
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.EndInit();
                 }
+                images.Add(image);
             }
 
             if (images.Count > 0)
@@ -87,6 +92,7 @@ namespace PharmaMem
                 PopupImage.Source = images[currentImageIndex];
             }
         }
+
 
         private void SetupSlideShow()
         {
