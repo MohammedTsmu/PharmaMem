@@ -182,21 +182,19 @@ namespace PharmaMem
             if (ImagePopup.IsOpen)
             {
                 var position = e.GetPosition(CurrentImage);
-                double scale = 2; // نسبة التكبير المستخدمة في الـXAML
-                double popupWidth = CurrentImage.ActualWidth * scale;
-                double popupHeight = CurrentImage.ActualHeight * scale;
+                double translateX = -(position.X / CurrentImage.ActualWidth) * PopupImage.ActualWidth;
+                double translateY = -(position.Y / CurrentImage.ActualHeight) * PopupImage.ActualHeight;
 
-                double translateX = -(position.X / CurrentImage.ActualWidth) * (popupWidth - CurrentImage.ActualWidth);
-                double translateY = -(position.Y / CurrentImage.ActualHeight) * (popupHeight - CurrentImage.ActualHeight);
+                double offsetX = (PopupImage.ActualWidth - 400) / 2;
+                double offsetY = (PopupImage.ActualHeight - 400) / 2;
 
-                // ضبط الحدود بحيث لا تتجاوز الصورة حدود الـPopup
-                translateX = Math.Max(Math.Min(translateX, 0), -(popupWidth - 400));
-                translateY = Math.Max(Math.Min(translateY, 0), -(popupHeight - 400));
-
-                PopupImageTranslateTransform.X = translateX;
-                PopupImageTranslateTransform.Y = translateY;
+                PopupImageTranslateTransform.X = translateX + offsetX;
+                PopupImageTranslateTransform.Y = translateY + offsetY;
             }
         }
+
+
+
 
 
 
