@@ -17,7 +17,7 @@ namespace PharmaMem
         private List<BitmapImage> images;
         private int currentImageIndex;
         private DispatcherTimer slideShowTimer;
-        private double currentZoom = 1;
+        private double currentZoom = 10;
 
         public ViewDrugDetailsWindow(int id)
         {
@@ -47,6 +47,18 @@ namespace PharmaMem
                 FamilyText.Text = reader["Family"].ToString();
                 MechanismText.Text = reader["Mechanism"].ToString();
                 MainJobText.Text = reader["MainJob"].ToString();
+
+                MaxDoseText.Text = reader["MaxDose"].ToString();
+                DrugInteractionsText.Text = reader["DrugInteractions"].ToString();
+                SpecialInstructionsText.Text = reader["SpecialInstructions"].ToString();
+                StorageConditionsText.Text = reader["StorageConditions"].ToString();
+                ShelfLifeText.Text = reader["ShelfLife"].ToString();
+                PrecautionsText.Text = reader["Precautions"].ToString();
+                ContraindicationsText.Text = reader["Contraindications"].ToString();
+                ManufacturerText.Text = reader["Manufacturer"].ToString();
+                PriceText.Text = reader["Price"].ToString();
+                ProductCodeText.Text = reader["ProductCode"].ToString();
+
                 LoadDrugImages();
             }
         }
@@ -139,7 +151,7 @@ namespace PharmaMem
             ImagePopup.IsOpen = false;
         }
 
-        private void CurrentImage_MouseMove(object sender, MouseEventArgs e)
+        /*private void CurrentImage_MouseMove(object sender, MouseEventArgs e)
         {
             if (ImagePopup.IsOpen)
             {
@@ -150,7 +162,50 @@ namespace PharmaMem
                 PopupImageTranslateTransform.X = translateX;
                 PopupImageTranslateTransform.Y = translateY;
             }
+        }*/
+        /*private void CurrentImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ImagePopup.IsOpen)
+            {
+                var position = e.GetPosition(CurrentImage);
+                double scale = 3; // نفس نسبة التكبير المستخدمة في الـXAML
+                double translateX = -(position.X / CurrentImage.ActualWidth) * (PopupImage.ActualWidth * scale - CurrentImage.ActualWidth);
+                double translateY = -(position.Y / CurrentImage.ActualHeight) * (PopupImage.ActualHeight * scale - CurrentImage.ActualHeight);
+
+                PopupImageTranslateTransform.X = translateX;
+                PopupImageTranslateTransform.Y = translateY;
+            }
+        }*/
+
+        private void CurrentImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ImagePopup.IsOpen)
+            {
+                var position = e.GetPosition(CurrentImage);
+                double scale = 2; // نسبة التكبير المستخدمة في الـXAML
+                double popupWidth = CurrentImage.ActualWidth * scale;
+                double popupHeight = CurrentImage.ActualHeight * scale;
+
+                double translateX = -(position.X / CurrentImage.ActualWidth) * (popupWidth - CurrentImage.ActualWidth);
+                double translateY = -(position.Y / CurrentImage.ActualHeight) * (popupHeight - CurrentImage.ActualHeight);
+
+                // ضبط الحدود بحيث لا تتجاوز الصورة حدود الـPopup
+                translateX = Math.Max(Math.Min(translateX, 0), -(popupWidth - 400));
+                translateY = Math.Max(Math.Min(translateY, 0), -(popupHeight - 400));
+
+                PopupImageTranslateTransform.X = translateX;
+                PopupImageTranslateTransform.Y = translateY;
+            }
         }
+
+
+
+
+
+
+
+
+
 
         private void PopupImage_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -175,7 +230,7 @@ namespace PharmaMem
                 fullImageView.Show();
             }
         }
-
+        
         private void EditDrug_Click(object sender, RoutedEventArgs e)
         {
             EditDrugWindow editWindow = new EditDrugWindow(drugId);

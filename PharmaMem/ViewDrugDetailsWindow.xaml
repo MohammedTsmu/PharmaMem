@@ -27,10 +27,20 @@
             <TextBlock Name="TypeText"/>
             <TextBlock Text="Dosage:" FontWeight="Bold" Margin="0,10,0,0"/>
             <TextBlock Name="DosageText"/>
+            <TextBlock Text="Max Dose:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="MaxDoseText"/>
             <TextBlock Text="Uses:" FontWeight="Bold" Margin="0,10,0,0"/>
             <TextBlock Name="UsesText"/>
             <TextBlock Text="Side Effects:" FontWeight="Bold" Margin="0,10,0,0"/>
             <TextBlock Name="SideEffectsText"/>
+            <TextBlock Text="Drug Interactions:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="DrugInteractionsText"/>
+            <TextBlock Text="Special Instructions:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="SpecialInstructionsText"/>
+            <TextBlock Text="Storage Conditions:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="StorageConditionsText"/>
+            <TextBlock Text="Shelf Life:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="ShelfLifeText"/>
             <TextBlock Text="Group:" FontWeight="Bold" Margin="0,10,0,0"/>
             <TextBlock Name="GroupText"/>
             <TextBlock Text="Category:" FontWeight="Bold" Margin="0,10,0,0"/>
@@ -43,20 +53,31 @@
             <TextBlock Name="MechanismText"/>
             <TextBlock Text="Main Job:" FontWeight="Bold" Margin="0,10,0,0"/>
             <TextBlock Name="MainJobText"/>
+            <TextBlock Text="Precautions:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="PrecautionsText"/>
+            <TextBlock Text="Contraindications:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="ContraindicationsText"/>
+            <TextBlock Text="Manufacturer:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="ManufacturerText"/>
+            <TextBlock Text="Price:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="PriceText"/>
+            <TextBlock Text="Product Code:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Name="ProductCodeText"/>
+
             <TextBlock Text="Images:" FontWeight="Bold" Margin="0,10,0,0"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Previous" Click="PreviousImage_Click" Width="75" Margin="10"/>
                 <Grid>
-                    <Image Name="CurrentImage" Height="200" Width="200" Margin="10"
+                    <Image Name="CurrentImage" Height="400" Width="400" Margin="10"
                            MouseEnter="CurrentImage_MouseEnter" MouseLeave="CurrentImage_MouseLeave"
                            MouseMove="CurrentImage_MouseMove" MouseDown="CurrentImage_MouseDown"/>
                     <Popup Name="ImagePopup" Placement="Mouse" AllowsTransparency="True" PopupAnimation="Fade">
-                        <Border BorderBrush="Black" BorderThickness="1">
+                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">
                             <Grid Width="400" Height="400">
-                                <Image Name="PopupImage" Stretch="UniformToFill" MouseWheel="PopupImage_MouseWheel">
+                                <Image Name="PopupImage" Stretch="Uniform">
                                     <Image.RenderTransform>
                                         <TransformGroup>
-                                            <ScaleTransform x:Name="PopupImageScaleTransform"/>
+                                            <ScaleTransform x:Name="PopupImageScaleTransform" ScaleX="2" ScaleY="2"/>
                                             <TranslateTransform x:Name="PopupImageTranslateTransform"/>
                                         </TransformGroup>
                                     </Image.RenderTransform>

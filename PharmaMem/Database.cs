@@ -37,7 +37,17 @@ namespace PharmaMem
                     Form TEXT,
                     Family TEXT,
                     Mechanism TEXT,
-                    MainJob TEXT
+                    MainJob TEXT,
+                    MaxDose TEXT,
+                    DrugInteractions TEXT,
+                    SpecialInstructions TEXT,
+                    StorageConditions TEXT,
+                    ShelfLife TEXT,
+                    Precautions TEXT,
+                    Contraindications TEXT,
+                    Manufacturer TEXT,
+                    Price TEXT,
+                    ProductCode TEXT
                 )";
 
             string createDrugImagesTable = @"

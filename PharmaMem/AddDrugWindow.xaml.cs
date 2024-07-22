@@ -26,6 +26,17 @@ namespace PharmaMem
             ShowPlaceholder(FamilyTextBox, "Family");
             ShowPlaceholder(MechanismTextBox, "Mechanism");
             ShowPlaceholder(MainJobTextBox, "Main Job");
+
+            ShowPlaceholder(MaxDoseTextBox, "Max Dose");
+            ShowPlaceholder(DrugInteractionsTextBox, "Drug Interactions");
+            ShowPlaceholder(SpecialInstructionsTextBox, "Special Instructions");
+            ShowPlaceholder(StorageConditionsTextBox, "Storage Conditions");
+            ShowPlaceholder(ShelfLifeTextBox, "Shelf Life");
+            ShowPlaceholder(PrecautionsTextBox, "Precautions");
+            ShowPlaceholder(ContraindicationsTextBox, "Contraindications");
+            ShowPlaceholder(ManufacturerTextBox, "Manufacturer");
+            ShowPlaceholder(PriceTextBox, "Price");
+            ShowPlaceholder(ProductCodeTextBox, "Product Code");
         }
 
         private void ShowPlaceholder(TextBox textBox, string placeholder)
@@ -83,10 +94,21 @@ namespace PharmaMem
             string mechanism = MechanismTextBox.Text;
             string mainJob = MainJobTextBox.Text;
 
+            string maxDose = MaxDoseTextBox.Text;
+            string drugInteractions = DrugInteractionsTextBox.Text;
+            string specialInstructions = SpecialInstructionsTextBox.Text;
+            string storageConditions = StorageConditionsTextBox.Text;
+            string shelfLife = ShelfLifeTextBox.Text;
+            string precautions = PrecautionsTextBox.Text;
+            string contraindications = ContraindicationsTextBox.Text;
+            string manufacturer = ManufacturerTextBox.Text;
+            string price = PriceTextBox.Text;
+            string productCode = ProductCodeTextBox.Text;
+
             Database db = new Database();
             SQLiteCommand command = new SQLiteCommand(@"
-                INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob) 
-                VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob)", db.Connection);
+                INSERT INTO Drugs (GenericName, BrandName, Type, Dosage, Uses, SideEffects, `Group`, Category, Form, Family, Mechanism, MainJob, MaxDose, DrugInteractions, SpecialInstructions, StorageConditions, ShelfLife, Precautions, Contraindications, Manufacturer, Price, ProductCode) 
+                VALUES (@GenericName, @BrandName, @Type, @Dosage, @Uses, @SideEffects, @Group, @Category, @Form, @Family, @Mechanism, @MainJob,  @MaxDose, @DrugInteractions, @SpecialInstructions, @StorageConditions, @ShelfLife, @Precautions, @Contraindications, @Manufacturer, @Price, @ProductCode)", db.Connection);
 
             command.Parameters.AddWithValue("@GenericName", genericName);
             command.Parameters.AddWithValue("@BrandName", brandName);
@@ -100,6 +122,17 @@ namespace PharmaMem
             command.Parameters.AddWithValue("@Family", family);
             command.Parameters.AddWithValue("@Mechanism", mechanism);
             command.Parameters.AddWithValue("@MainJob", mainJob);
+
+            command.Parameters.AddWithValue("@MaxDose", maxDose);
+            command.Parameters.AddWithValue("@DrugInteractions", drugInteractions);
+            command.Parameters.AddWithValue("@SpecialInstructions", specialInstructions);
+            command.Parameters.AddWithValue("@StorageConditions", storageConditions);
+            command.Parameters.AddWithValue("@ShelfLife", shelfLife);
+            command.Parameters.AddWithValue("@Precautions", precautions);
+            command.Parameters.AddWithValue("@Contraindications", contraindications);
+            command.Parameters.AddWithValue("@Manufacturer", manufacturer);
+            command.Parameters.AddWithValue("@Price", price);
+            command.Parameters.AddWithValue("@ProductCode", productCode);
 
             command.ExecuteNonQuery();
 
